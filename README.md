@@ -10,9 +10,9 @@ By: David Meshnick
 Based on: [Quantum autoencoders with enhanced data encoding](https://arxiv.org/abs/2010.06599)
 
 Relevant Files:
-- qae.py
-- ./plots
-- ./Lit/qae_enhanced.pdf
+- ./QADsim/qae.py
+- ./QADsim/plots
+- ./QADsim/Lit/qae_enhanced.pdf
 
 Work:
 - Implemented base quantum autoencoder (QAE) and feature-enhanced quantum autoencoder (EF_QAE) using `qibo` backend
@@ -32,9 +32,9 @@ By: David Meshnick
 Based on: [Variational quantum anomaly detection: Unsupervised mapping of phase diagrams on a physical quantum computer](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.043184)
 
 Relevant Files:
-- utils.py
-- qae_simulation.ipynb
-- ./Lit/vqad_phase.pdf
+- ./QADsimutils.py
+- ./QADsimqae_simulation.ipynb
+- ./QADsim/Lit/vqad_phase.pdf
 
 Work:
 - Implemented EF_QAE from Simulation 1 with the [qiskit](https://qiskit.org/) backend
