@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
 from qibo import hamiltonians, gates, models, K
@@ -287,6 +285,7 @@ def main(autoencoder, layers, example, maxiter):
     return cost_function_steps
 
 
+# Useful for testing individual results
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser()
 #     parser.add_argument("--layers", default=3, type=int, help='(int): number of ansatz layers')
@@ -296,6 +295,7 @@ def main(autoencoder, layers, example, maxiter):
 #     args = parser.parse_args()
 #     main(**vars(args))
     
+# Used for generating comparison plots
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(conflict_handler='resolve')
     parser.add_argument("--layers", default=3, type=int, help='(int): number of ansatz layers')
