@@ -10,13 +10,19 @@ import argparse
 def main(autoencoder, layers, example, maxiter):
 
     def encoder_hamiltonian_simple(nqubits, ncompress):
-        """Creates the encoding Hamiltonian.
-        Args:
-            nqubits (int): total number of qubits.
-            ncompress (int): number of discarded/trash qubits.
+        """Creates the encoding Hamiltonian
 
-        Returns:
-            Encoding Hamiltonian.
+        Parameters
+        ----------
+        nqubits : int
+            Total number of qubits
+        ncompress : int
+            Number of discarded/trash qubits
+
+        Returns
+        -------
+        _type_
+            Encoding Hamiltonian
         """
         m0 = K.to_numpy(hamiltonians.Z(ncompress).matrix)
         m1 = np.eye(2 ** (nqubits - ncompress), dtype=m0.dtype)
@@ -24,6 +30,20 @@ def main(autoencoder, layers, example, maxiter):
         return 0.5 * (ham + ncompress)
 
     def rotate(theta, x):
+        """Rotate the theta parameters
+
+        Parameters
+        ----------
+        theta : array, list
+            Values of the theta parameters
+        x : float
+            Ground state lambda
+
+        Returns
+        -------
+        _type_
+            Rotated theta parameters
+        """
         new_theta = []
         index = 0
         for l in range(layers):
@@ -44,6 +64,9 @@ def main(autoencoder, layers, example, maxiter):
     encoder = encoder_hamiltonian_simple(nqubits, compress)
     count = [0]
 
+    ############################
+    # The Ising Model Example
+    ############################
     if example == 0:
         ising_groundstates = []
         lambdas = np.linspace(0.5, 1.0, 20)
@@ -51,6 +74,9 @@ def main(autoencoder, layers, example, maxiter):
             ising_ham = -1 * hamiltonians.TFIM(nqubits, h=lamb)
             ising_groundstates.append(ising_ham.eigenvectors()[0])
 
+        ############
+        # Base QAE
+        ############
         if autoencoder == 1:
             circuit = models.Circuit(nqubits)
             for l in range(layers):
@@ -74,11 +100,17 @@ def main(autoencoder, layers, example, maxiter):
             def cost_function_QAE_Ising(params, count):
                 """Evaluates the cost function to be minimized for the QAE and Ising model.
 
-                Args:
-                    params (array or list): values of the parameters.
+                Parameters
+                ----------
+                params : array, list
+                    Values of the parameters
+                count : array, list
+                    Tracks number of cost iterations
 
-                Returns:
-                    Value of the cost function.
+                Returns
+                -------
+                float
+                    Cost function value
                 """
                 cost = 0
                 circuit.set_parameters(params) # this will change all thetas to the appropriate values
@@ -100,6 +132,9 @@ def main(autoencoder, layers, example, maxiter):
             result = minimize(cost_function_QAE_Ising, initial_params,
                               args=(count), method='BFGS', options={'maxiter': maxiter})
 
+        ############
+        # EF_QAE
+        ############
         elif autoencoder == 0:
             circuit = models.Circuit(nqubits)
             for l in range(layers):
@@ -121,13 +156,19 @@ def main(autoencoder, layers, example, maxiter):
                 circuit.add(gates.RY(q, theta=0))
 
             def cost_function_EF_QAE_Ising(params, count):
-                """Evaluates the cost function to be minimized for the EF-QAE and Ising model.
+                """Evaluates the cost function to be minimized for the EF_QAE and Ising model.
 
-                Args:
-                    params (array or list): values of the parameters.
+                Parameters
+                ----------
+                params : array, list
+                    Values of the parameters
+                count : array, list
+                    Tracks number of cost iterations
 
-                Returns:
-                    Value of the cost function.
+                Returns
+                -------
+                float
+                    Cost function value
                 """
                 cost = 0
                 for i in range(len(ising_groundstates)):
@@ -154,6 +195,9 @@ def main(autoencoder, layers, example, maxiter):
         else:
             raise ValueError("You have to introduce a value of 0 or 1 in the autoencoder argument.")
 
+    ############################
+    # The MNIST Example
+    ############################
     elif example == 1:
         digits = load_digits()
         vector_0 = []
@@ -163,6 +207,9 @@ def main(autoencoder, layers, example, maxiter):
         for value in [1, 11, 21, 42, 47, 56, 70, 85, 90, 93]:
             vector_1.append(np.array(digits.data[value])/np.linalg.norm(np.array(digits.data[value])))
 
+        ############
+        # Base QAE
+        ############
         if autoencoder == 1:
             circuit = models.Circuit(nqubits)
             for l in range(layers):
@@ -184,13 +231,19 @@ def main(autoencoder, layers, example, maxiter):
                 circuit.add(gates.RY(q, theta=0))
 
             def cost_function_QAE_Digits(params, count):
-                """Evaluates the cost function to be minimized for the QAE and Handwritten digits.
+                """Evaluates the cost function to be minimized for the QAE and MNIST digits.
 
-                Args:
-                    params (array or list): values of the parameters.
+                Parameters
+                ----------
+                params : array, list
+                    Values of the parameters
+                count : array, list
+                    Tracks number of cost iterations
 
-                Returns:
-                    Value of the cost function.
+                Returns
+                -------
+                float
+                    Cost function value
                 """
                 cost = 0
                 circuit.set_parameters(params) # this will change all thetas to the appropriate values
@@ -215,6 +268,9 @@ def main(autoencoder, layers, example, maxiter):
             result = minimize(cost_function_QAE_Digits, initial_params,
                               args=(count), method='BFGS', options={'maxiter': maxiter})
 
+        ############
+        # EF_QAE
+        ############
         elif autoencoder == 0:
             circuit = models.Circuit(nqubits)
             for l in range(layers):
@@ -236,13 +292,19 @@ def main(autoencoder, layers, example, maxiter):
                 circuit.add(gates.RY(q, theta=0))
 
             def cost_function_EF_QAE_Digits(params, count):
-                """Evaluates the cost function to be minimized for the EF-QAE and Handwritten digits.
+                """Evaluates the cost function to be minimized for the EF_QAE and MNIST.
 
-                Args:
-                    params (array or list): values of the parameters.
+                Parameters
+                ----------
+                params : array, list
+                    Values of the parameters
+                count : array, list
+                    Tracks number of cost iterations
 
-                Returns:
-                    Value of the cost function.
+                Returns
+                -------
+                float
+                    Cost function value
                 """
                 cost = 0
                 newparams = rotate(params, 1)
@@ -256,8 +318,10 @@ def main(autoencoder, layers, example, maxiter):
                     final_state = circuit.execute(np.copy(vector_1[i]))
                     cost += K.to_numpy(encoder.expectation(final_state)).real
 
-                cost_function_steps.append(cost/(len(vector_0)+len(vector_1))) # save cost function value after each step
+                # save cost function value after each step
+                cost_function_steps.append(cost/(len(vector_0)+len(vector_1)))
 
+                # For tracking the cost in terminal
                 if count[0] % 100 == 0:
                     print(count[0], cost/(len(vector_0)+len(vector_1)))
                 count[0] += 1
